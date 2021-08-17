@@ -7,8 +7,11 @@ import Boticario.Test.BelezaNaWeb.model.InventoryModel
 import Boticario.Test.BelezaNaWeb.model.ProductModel
 import Boticario.Test.BelezaNaWeb.model.WarehouseModel
 
-fun ProductRequest.ToProductModel(): ProductModel {
+fun ProductRequest.toProductModel(): ProductModel {
     return  ProductModel(sku= this.sku, name= this.name, inventory = this.inventory.toInventoryModel())
+}
+fun ProductRequest.toProductModelMethodPut(sku: Long): ProductModel {
+    return  ProductModel(sku= sku, name= this.name, inventory = this.inventory.toInventoryModel())
 }
 
 fun InventoryRequest.toInventoryModel(): InventoryModel{
