@@ -1,8 +1,8 @@
 package Boticario.Test.BelezaNaWeb.controllers
 
 import Boticario.Test.BelezaNaWeb.controllers.requests.ProductRequest
-import Boticario.Test.BelezaNaWeb.extension.ToProductModel
-import Boticario.Test.BelezaNaWeb.extension.ToProductModelMethodPut
+import Boticario.Test.BelezaNaWeb.extension.toProductModel
+import Boticario.Test.BelezaNaWeb.extension.toProductModelMethodPut
 import Boticario.Test.BelezaNaWeb.model.ProductModel
 import Boticario.Test.BelezaNaWeb.services.ProductsServices
 import org.springframework.http.HttpStatus
@@ -16,7 +16,7 @@ class ProductsController(val productsServices: ProductsServices) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun createProduct(@RequestBody body: ProductRequest) {
-        productsServices.createProductServices(body.ToProductModel())
+        productsServices.createProductServices(body.toProductModel())
     }
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -31,7 +31,7 @@ class ProductsController(val productsServices: ProductsServices) {
 
     @PutMapping("/{sku}")
     fun putProductBySku(@PathVariable sku: Long, @RequestBody body: ProductRequest){
-        productsServices.putProductBySku(body.ToProductModelMethodPut(sku))
+        productsServices.putProductBySku(body.toProductModelMethodPut(sku))
     }
 
     @DeleteMapping("/{sku}")

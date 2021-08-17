@@ -1,6 +1,9 @@
 package Boticario.Test.BelezaNaWeb.services
 
 
+import Boticario.Test.BelezaNaWeb.enums.Errors
+import Boticario.Test.BelezaNaWeb.extension.ForbiddenException
+import Boticario.Test.BelezaNaWeb.extension.NotFoundException
 import Boticario.Test.BelezaNaWeb.model.ProductModel
 import org.springframework.stereotype.Service
 
@@ -11,8 +14,15 @@ class ProductsServices {
     fun getAllProducts(): List<ProductModel> {
         return products
     }
+
     fun getProductsBySku(sku:Long): ProductModel{
-       return products.filter { it.sku == sku }.first()
+          products.find { it.sku == sku}.let{
+             if(it == null){
+                 throw NotFoundException(Errors.BLZ002.message.format(sku))
+             } else {
+                 return it
+             }
+         }
     }
 
     fun verifyQuantity (product:ProductModel){
@@ -26,20 +36,35 @@ class ProductsServices {
     }
 
     fun createProductServices(product: ProductModel) {
+       products.find { it.sku == product.sku}.let{
+           if (it != null) {
+               throw ForbiddenException(Errors.BLZ001.message.format(it.sku))
+           }
+       }
         verifyQuantity(product)
         products.add(product)
     }
 
     fun putProductBySku( product: ProductModel){
-        products.filter { it.sku == product.sku }.first().let {
-            it.name = product.name
-            it.inventory = product.inventory
-            verifyQuantity(it)
+        products.find { it.sku == product.sku }.let {
+            if(it == null){
+                throw NotFoundException(Errors.BLZ002.message.format(product.sku))
+            } else {
+                it.name = product.name
+                it.inventory = product.inventory
+                verifyQuantity(it)
+            }
         }
     }
 
     fun deleteProductsBySku(sku:Long){
-        products.removeIf { it.sku == sku }
+        products.find{ it.sku == sku }.let {
+            if(it == null){
+                throw NotFoundException(Errors.BLZ002.message.format(sku))
+            } else {
+                products.removeIf { it.sku == sku}
+            }
+        }
     }
 
 }
