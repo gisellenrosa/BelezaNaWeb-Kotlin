@@ -21,7 +21,6 @@ class controllerAdvice {
             "Bad Request",
         )
         return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
-
     }
 
     @ExceptionHandler(NotFoundException::class)
@@ -40,7 +39,6 @@ class controllerAdvice {
             ex.message,
         )
         return ResponseEntity(errorResponse, HttpStatus.FORBIDDEN)
-
     }
 
 }
