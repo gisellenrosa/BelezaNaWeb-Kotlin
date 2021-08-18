@@ -5,18 +5,18 @@ import Boticario.Test.BelezaNaWeb.enums.Errors
 import Boticario.Test.BelezaNaWeb.extension.ForbiddenException
 import Boticario.Test.BelezaNaWeb.extension.NotFoundException
 import Boticario.Test.BelezaNaWeb.model.ProductModel
+import Boticario.Test.BelezaNaWeb.repository.ProductRepository
 import org.springframework.stereotype.Service
 
 @Service
-class ProductsServices {
-    val products = mutableListOf<ProductModel>()
+class ProductsServices(val productRepository: ProductRepository) {
 
     fun getAllProducts(): List<ProductModel> {
-        return products
+        return productRepository.findAll()
     }
 
     fun getProductsBySku(sku:Long): ProductModel{
-          products.find { it.sku == sku}.let{
+        productRepository.findBySku(sku).let{
              if(it == null){
                  throw NotFoundException(Errors.BLZ002.message.format(sku))
              } else {
@@ -36,17 +36,17 @@ class ProductsServices {
     }
 
     fun createProductServices(product: ProductModel) {
-       products.find { it.sku == product.sku}.let{
+        productRepository.findAll().find { it.sku == product.sku}.let{
            if (it != null) {
                throw ForbiddenException(Errors.BLZ001.message.format(it.sku))
            }
        }
         verifyQuantity(product)
-        products.add(product)
+        productRepository.save(product)
     }
 
     fun putProductBySku( product: ProductModel){
-        products.find { it.sku == product.sku }.let {
+        productRepository.findAll().find { it.sku == product.sku }.let {
             if(it == null){
                 throw NotFoundException(Errors.BLZ002.message.format(product.sku))
             } else {
@@ -58,11 +58,11 @@ class ProductsServices {
     }
 
     fun deleteProductsBySku(sku:Long){
-        products.find{ it.sku == sku }.let {
+        productRepository.findBySku(sku).let {
             if(it == null){
                 throw NotFoundException(Errors.BLZ002.message.format(sku))
             } else {
-                products.removeIf { it.sku == sku}
+                productRepository.delete(it)
             }
         }
     }
